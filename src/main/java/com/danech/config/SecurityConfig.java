@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,6 +26,13 @@ import com.danech.filter.SecurityFilter;
  */
 @Configuration
 @EnableWebSecurity
+/* It is necessary to add this annotation to add functionality of method level security
+ * We can add @Secured("ROLE_ADMIN") in the method level or class level too.
+ * We can add preAuthorise
+*/
+@EnableGlobalMethodSecurity(
+		securedEnabled = true, 
+		prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -67,17 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		// Allow all for registration and login
 		.antMatchers("/register","/login")
-		.permitAll()
-
-		.antMatchers("/emp/welcome").hasAuthority("EMP")
-		// Make sure it is hasRole - ROLE_ prefix will be applied
-		// Differences between authority and role is hasRole will applied ROLE prefix in the the authority
-		.antMatchers("/emp/products").hasRole("EMP")
-		
-		.antMatchers("/admin/inventory").hasAuthority("ADMIN")
-		.antMatchers("/admin/sales").hasAuthority("ADMIN")
-				
-		.anyRequest().permitAll()
+		.permitAll()				
 
 		//Any Unauthorized user
 		.and()
